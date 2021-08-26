@@ -192,4 +192,30 @@ grid on;
 figure
 plot3(ss(1,1:100),ss(2,1:100), ss1(1,1:100),xx(1,1:100),xx(2,1:100), xx(3,1:100));
 xlabel('X[m]'); ylabel('y[m]'); zlabel('z[m]');
+legend('Target','UAV');
 grid on;
+
+
+%% Simulation
+figh = figure
+for i=1:100
+    hold on;
+    plot3(ss(1,i),ss(2,i), ss1(1,i),xx(1,i),xx(2,i), xx(3,i),'go', 'LineWidth', 4, 'MarkerSize', 1);
+    plot3(ss(1,i),ss(2,i), ss1(1,i), 'bo', 'LineWidth', 4, 'MarkerSize', 1);
+    xlabel('X[m]'); ylabel('y[m]'); zlabel('z[m]');
+    legend('Target','UAV');
+    view([30+i 35]);
+    grid on;
+    hold off;
+    drawnow;
+    
+    movieVector(i) = getframe(figh, [10 10 520 400]);
+    
+end
+
+myWriter = VideoWriter('Tracking4');
+myWriter.FrameRate = 20;
+
+open(myWriter);
+writeVideo(myWriter, movieVector);
+close(myWriter);
