@@ -16,7 +16,7 @@
 
 
 ### 📌 Target with angular velocity                       
-<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5.gif"-->
+<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5(2).gif"-->
 <img align="middle" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5.gif">        
 
 
