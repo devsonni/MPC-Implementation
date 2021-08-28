@@ -17,4 +17,8 @@
 
 ### 📌 Target with angular velocity                       
 <!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5.gif"-->
-<img align="left" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5.gif"> 
+<img align="left" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5.gif">        
+
+
+### Source Code for this paper 📝        
+[NMPC-based UAV 3D Target Tracking In The Presence Of Obstacles and Visibility Constraints](https://ieeexplore.ieee.org/document/9476710)
