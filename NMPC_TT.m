@@ -10,41 +10,54 @@ import casadi.*
 T = 0.2;
 N = 15;
 
-% Constrains of UAV
+% Constrains of UAV with gimbal
 
-  %input constrains
+  % input constrains of UAV
 v_u_min = 14; v_u_max = 30;
 omega_2_u_min = -pi/30; omega_2_u_max = pi/30;
 omega_3_u_min = -pi/21; omega_3_u_max = pi/21;
 
-  %states constrains
+  % input constrains of gimbal
+omega_1_g_min = -pi/30; omega_1_g_max = pi/30;
+omega_2_g_min = -pi/30; omega_2_g_max = pi/30;
+omega_3_g_min = -pi/30; omega_3_g_max = pi/30;
+  
+  % states constrains of UAV
 theta_u_min = -0.2618; theta_u_max = 0.2618;
 z_u_min = 75; z_u_max = 150;
 
-% States of UAV with-out gimbal camera
+  % states constrains of gimbal
+phi_g_min = -pi/6; phi_g_max = pi/6;
+theta_g_min = -pi/6; theta_g_max = pi/6;
+shi_g_min = -pi/6; shi_g_max = pi/6;
+
+% States of UAV with gimbal camera
 
 x_u = SX.sym('x_u'); y_u = SX.sym('y_u'); z_u = SX.sym('z_u'); theta_u = SX.sym('theta_u'); psi_u = SX.sym('psi_u');   %states of the UAV
-states_u = [x_u; y_u; z_u; theta_u; psi_u];      n_states_u = length(states_u);               %UAV
+phi_g = SX.sym('phi_g'); shi_g = SX.sym('shi_g'); theta_g = SX.sym('theta_g');                                         %states of gimbal
+
+states_u = [x_u; y_u; z_u; theta_u; psi_u; phi_g; theta_g; shi_g];      n_states_u = length(states_u);               %UAV with gimbal
 
 % Controls of UAV that will find by NMPC
 
-v_u = SX.sym('v_u'); omega_2_u = SX.sym('omega_2_u'); omega_3_u = SX.sym('omega_3_u');        % UAV cotrols parameters
+v_u = SX.sym('v_u'); omega_2_u = SX.sym('omega_2_u'); omega_3_u = SX.sym('omega_3_u');              % UAV cotrols parameters
+omega_1_g = SX.sym('omega_1_g'); omega_2_g = SX.sym('omega_2_g'); omega_3_g = SX.sym('omega_3_g');  % Gimbal control parameters
 
-controls_u = [v_u; omega_2_u; omega_3_u]; n_controls = length(controls_u);
+controls_u = [v_u; omega_2_u; omega_3_u; omega_1_g; omega_2_g; omega_3_g]; n_controls = length(controls_u);
 rhs_u = [v_u*cos(psi_u)*cos(theta_u); v_u*sin(psi_u)*cos(theta_u); v_u*sin(theta_u);...
-    omega_2_u; omega_3_u];                                                                    %systems r.h.s
+    omega_2_u; omega_3_u; omega_1_g; omega_2_g; omega_3_g];                                         %systems r.h.s
 
 f_u = Function('f_u',{states_u,controls_u}, {rhs_u});                                         % Nonlinear Mapping Function f(x,u)
 U = SX.sym('U',n_controls, N);                                                                % Desition Variables 
 P = SX.sym('P',n_states_u + 3);                                                        
-% This consists of initial states od UAV 1-5 and reference states 6-7(reference states are target's states)
+% This consists of initial states of UAV with gimbal 1-8 and reference states 9-11 (reference states are target's states)
 
 X = SX.sym('X',n_states_u,(N+1));
 % Consists of future predicted states of UAV
 
 % Filling the defined sysem parameters of UAV --------------------------------------------------------------------------
 
-X(:,1) = P(1:5) % initial state
+X(:,1) = P(1:8) % initial state
 for k = 1:N
     st = X(:,k); con = U(:,k);
     f_value = f_u(st,con);
@@ -55,7 +68,8 @@ end
 ff = Function('ff',{U,P},{X});
 
 
-%% Defining the system of Target ------------------------------------------------------------------------------------------
+%{
+ Defining the system of Target ------------------------------------------------------------------------------------------
 
 %states of target
 x_t = SX.sym('x_t'); y_t = SX.sym('y_t'); theta_t = SX.sym('theta_t');                                               
@@ -69,23 +83,27 @@ rhs_t = [v_t*cos(theta_t); v_t*sin(theta_t); omega_t];
 
 f_t = Function('f_t',{states_t,controls_t}, {rhs_t}); 
 
+%}
 
 obj = 0; %objective function
 g = [];  %constrains of pitch angle theta
 
 for k=1:N
     stt = X(1:2,1:N); 
-    obj = obj + sqrt((stt(1,k)-P(6))^2 + (stt(2,k)-P(7))^2);
+    obj = obj + sqrt((stt(1,k)-P(9))^2 + (stt(2,k)-P(11))^2);
 end
 
 %compute the constrains
  for k=1:N+1
      g = [g, X(3,k)]; %limit on height
      g = [g, X(4,k)]; %limit on pitch angle theta
+     g = [g, X(6,k)]; %limit on gimbal angle phi
+     g = [g, X(7,k)]; %limit on gimbal angle theta
+     g = [g, X(8,k)]; %limit on gimbal angle shi
  end
  
 % make the decision variables one column vector
-OPT_variables = reshape(U,3*N,1);
+OPT_variables = reshape(U,6*N,1);
 nlp_prob = struct('f', obj, 'x', OPT_variables, 'g', g, 'p', P);
 
 opts = struct;
@@ -100,21 +118,28 @@ solver = nlpsol('solver', 'ipopt', nlp_prob,opts);
 args = struct;
 
 % inequality constraints (state constraints)
-args.lbg(1,1:2:32) = 75;     args.lbg(1,2:2:32) = -0.2618;    % lower bound of height and theta 
-args.ubg(1,1:2:32) = 150;    args.ubg(1,2:2:32) =  0.2618;    % upper bound of height and theta 
+args.lbg(1,1:5:80) = 75;          args.ubg(1,1:5:80) = 150;             % bounds on height  
+args.lbg(1,2:5:80) = -0.2618;     args.ubg(1,2:5:80) =  0.2618;         % bounds on theta of UAV 
+args.lbg(1,3:5:80) = phi_g_min;   args.ubg(1,3:5:80) = phi_g_max;       % bounds on gimbal angle phi
+args.lbg(1,4:5:80) = theta_g_min; args.ubg(1,4:5:80) = theta_g_max;     % bounds on gimbal angle theta
+args.lbg(1,5:5:80) = shi_g_min;   args.ubg(1,5:5:80) = shi_g_max;       % bounds on gimbal angle shi
 
 % input constraints
-args.lbx(1:3:3*N-1,1) = v_u_min; args.lbx(2:3:3*N,1) = omega_2_u_min; args.lbx(3:3:3*N,1) = omega_3_u_min;
-args.ubx(1:3:3*N-1,1) = v_u_max; args.ubx(2:3:3*N,1) = omega_2_u_max; args.ubx(3:3:3*N,1) = omega_3_u_max;
+args.lbx(1:6:6*N-1,1) = v_u_min;  args.lbx(2:6:6*N,1) = omega_2_u_min;  args.lbx(3:6:6*N,1) = omega_3_u_min;  % UAV's input bounds
+args.ubx(1:6:6*N-1,1) = v_u_max;  args.ubx(2:6:6*N,1) = omega_2_u_max;  args.ubx(3:6:6*N,1) = omega_3_u_max;
+
+args.lbx(4:6:6*N,1) = omega_1_g_min;     args.ubx(4:6:6*N,1) = omega_1_g_max;      % gimbal's input bounds
+args.lbx(5:6:6*N,1) = omega_2_g_min;     args.ubx(5:6:6*N,1) = omega_2_g_max; 
+args.lbx(6:6:6*N,1) = omega_3_g_min;     args.ubx(6:6:6*N,1) = omega_3_g_max;
 
 %% Simulation starts from here----------------------------------------------------------------------------------------------
 
 t0 = 0;
-x0 = [90;150;80;0;0]; %initial location of UAV
+x0 = [90;150;80;0;0;0;0;0]; %initial location of UAV and gimbal
 xs = [100;150;0]; %reference for the UAV which is target
 xx(:,1) = x0; %storing history of location the UAV
 t(1) = t0;
-u0 = zeros(N,3); %initial control of UAV
+u0 = zeros(N,6); %initial control of UAV
 sim_time = 20;
 
 % NMPC starts form here
@@ -129,19 +154,19 @@ ss(:,1) = xs;
 main_loop = tic;
 while (mpciter < sim_time/T)
     args.p = [x0;xs];
-    args.x0 = reshape(u0',3*N,1); % initial value of the optimization variables
+    args.x0 = reshape(u0',6*N,1); % initial value of the optimization variables
     %tic
     sol = solver('x0', args.x0, 'lbx', args.lbx, 'ubx', args.ubx,...
             'lbg', args.lbg, 'ubg', args.ubg,'p',args.p);    
     %toc
-    u = reshape(full(sol.x)',3,N)';
+    u = reshape(full(sol.x)',6,N)';
     ff_value = ff(u',args.p); % compute OPTIMAL solution TRAJECTORY
-    xx1(:,1:5,mpciter+1)= full(ff_value)';
+    xx1(:,1:8,mpciter+1)= full(ff_value)';
     xss(:,1:3,mpciter+1) = full(xs)'; 
     
     u_cl= [u_cl ; u(1,:)];
     t(mpciter+1) = t0;
-    [t0, x0, u0, xs] = shift1(T, t0, x0, u, f_u, f_t, xs); % get the initialization of the next optimization step
+    [t0, x0, u0, xs] = shift1(T, t0, x0, u, f_u, xs); % get the initialization of the next optimization step
     
     ss(:,mpciter+2) = xs;
     xx(:,mpciter+2) = x0;  
