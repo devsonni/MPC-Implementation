@@ -166,7 +166,8 @@ grid on;
 
 
  
-%% Simulation
+%{
+ Simulation
 
 figh = figure
 for i=1:100
@@ -184,7 +185,6 @@ for i=1:100
     
 end
 
-%{
 myWriter = VideoWriter('Tracking6');
 myWriter.FrameRate = 10;
 
