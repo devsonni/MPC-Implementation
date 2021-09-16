@@ -67,30 +67,14 @@ end
 
 ff = Function('ff',{U,P},{X});
 
-
-%{
- Defining the system of Target ------------------------------------------------------------------------------------------
-
-%states of target
-x_t = SX.sym('x_t'); y_t = SX.sym('y_t'); theta_t = SX.sym('theta_t');                                               
-states_t = [x_t; y_t; theta_t];    n_states_t = length(states_t); 
-
-%Controls of target
-v_t = SX.sym('v_t'); omega_t = SX.sym('omega_t');  
-
-controls_t = [v_t; omega_t];
-rhs_t = [v_t*cos(theta_t); v_t*sin(theta_t); omega_t];
-
-f_t = Function('f_t',{states_t,controls_t}, {rhs_t}); 
-
-%}
+%% Objective function-----------------------------------------------------------------------------------------------------
 
 obj = 0; %objective function
 g = [];  %constrains of pitch angle theta
 
 for k=1:N
     stt = X(1:2,1:N); 
-    obj = obj + sqrt((stt(1,k)-P(9))^2 + (stt(2,k)-P(11))^2);
+    obj = obj + sqrt((stt(1,k)-P(9))^2 + (stt(2,k)-P(10))^2);
 end
 
 %compute the constrains
@@ -192,6 +176,8 @@ grid on;
 
  
 %{
+%% Code for saving video file of simulation
+
  Simulation
 
 figh = figure
