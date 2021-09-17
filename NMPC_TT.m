@@ -128,9 +128,6 @@ args.lbx(4:6:6*N,1) = omega_1_g_min;     args.ubx(4:6:6*N,1) = omega_1_g_max;   
 args.lbx(5:6:6*N,1) = omega_2_g_min;     args.ubx(5:6:6*N,1) = omega_2_g_max; 
 args.lbx(6:6:6*N,1) = omega_3_g_min;     args.ubx(6:6:6*N,1) = omega_3_g_max;
 
-%% Calculation related to FOV of gimbal-------------------------------------------------------------------------------------
-
-
 %% Simulation starts from here----------------------------------------------------------------------------------------------
 
 t0 = 0;
