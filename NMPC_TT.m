@@ -29,7 +29,7 @@ z_u_min = 75; z_u_max = 150;
   % states constrains of gimbal
 phi_g_min = -pi/6; phi_g_max = pi/6;
 theta_g_min = -pi/6; theta_g_max = pi/6;
-shi_g_min = -pi/6; shi_g_max = pi/6;
+shi_g_min = -pi/2; shi_g_max = pi/2;
 
 % States of UAV with gimbal camera
 
@@ -73,8 +73,20 @@ obj = 0; %objective function
 g = [];  %constrains of pitch angle theta
 
 for k=1:N
-    stt = X(1:2,1:N); 
-    obj = obj + sqrt((stt(1,k)-P(9))^2 + (stt(2,k)-P(10))^2);
+    stt = X(1:8,1:N); A= SX.sym('A',N); B= SX.sym('B',N); C= SX.sym('C',N); X_E= SX.sym('X_E',N); Y_E= SX.sym('Y_E',N);
+    VFOV = 5;
+    HFOV = 10;
+    w1 = 0.1;
+    w2 = 1;
+    a = (stt(3,k)*(tan(stt(7,k)+VFOV/2)) - stt(3,k)*tan(stt(7,k)-VFOV/2))/2;
+    b = (stt(3,k)*(tan(stt(6,k)+HFOV/2)) - stt(3,k)*tan(stt(6,k)-HFOV/2))/2;
+    A(k) = ((cos(stt(8,k)))^2)/a^2 + ((sin(stt(8,k)))^2)/b^2;
+    B(k) = 2*cos(stt(8,k))*sin(stt(8,k))*((1/a^2)-(1/b^2));
+    C(k) = ((sin(stt(8,k)))^2)/a^2 + ((cos(stt(8,k)))^2)/b^2;
+    X_E(k) = stt(1,k) + a + stt(3,k)*(tan(stt(7,k)-VFOV/2));
+    Y_E(k) = stt(2,k) + b + stt(3,k)*(tan(stt(6,k)-HFOV/2));
+    obj = obj + w1*sqrt((stt(1,k)-P(9))^2 + (stt(2,k)-P(10))^2) + w2*((A(k)*(P(9)-X_E(k))^2 +...
+        B(k)*(P(10)-Y_E(k))*(P(9)-X_E(k)) + C(k)*(P(10)-Y_E(k))^2)-1);
 end
 
 %compute the constrains
@@ -115,6 +127,9 @@ args.ubx(1:6:6*N-1,1) = v_u_max;  args.ubx(2:6:6*N,1) = omega_2_u_max;  args.ubx
 args.lbx(4:6:6*N,1) = omega_1_g_min;     args.ubx(4:6:6*N,1) = omega_1_g_max;      % gimbal's input bounds
 args.lbx(5:6:6*N,1) = omega_2_g_min;     args.ubx(5:6:6*N,1) = omega_2_g_max; 
 args.lbx(6:6:6*N,1) = omega_3_g_min;     args.ubx(6:6:6*N,1) = omega_3_g_max;
+
+%% Calculation related to FOV of gimbal-------------------------------------------------------------------------------------
+
 
 %% Simulation starts from here----------------------------------------------------------------------------------------------
 
@@ -172,13 +187,10 @@ plot3(ss(1,1:100),ss(2,1:100), ss1(1,1:100),xx(1,1:100),xx(2,1:100), xx(3,1:100)
 xlabel('X[m]'); ylabel('y[m]'); zlabel('z[m]');
 legend('Target','UAV');
 grid on;
-
-
  
-%{
-%% Code for saving video file of simulation
 
- Simulation
+%{
+% Code for saving video file of simulation
 
 figh = figure
 for i=1:100
