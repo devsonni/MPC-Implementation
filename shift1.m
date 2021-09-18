@@ -6,7 +6,7 @@ st = st+ (T*f_value);
 x0 = full(st);
 
 st_t = xs;
-con_t = [15; 0];
+con_t = [5; 0];
 f_t_value = [con_t(1)*cos(xs(3));con_t(1)*sin(xs(3));con_t(2)];
 xs = xs + (T*f_t_value);
 xs = full(xs);
