@@ -75,9 +75,9 @@ g = [];  %constrains of pitch angle theta
 for k=1:N
     stt = X(1:8,1:N); A= SX.sym('A',N); B= SX.sym('B',N); C= SX.sym('C',N); X_E= SX.sym('X_E',N); Y_E= SX.sym('Y_E',N);
     VFOV = 5;
-    HFOV = 10;
+    HFOV = 5;
     w1 = 0.1;
-    w2 = 0;
+    w2 = 1;
     a = (stt(3,k)*(tan(stt(7,k)+VFOV/2)) - stt(3,k)*tan(stt(7,k)-VFOV/2))/2;
     b = (stt(3,k)*(tan(stt(6,k)+HFOV/2)) - stt(3,k)*tan(stt(6,k)-HFOV/2))/2;
     A(k) = ((cos(stt(8,k)))^2)/a^2 + ((sin(stt(8,k)))^2)/b^2;
@@ -148,7 +148,7 @@ ss = [];
 ss(:,1) = xs;
 
 main_loop = tic;
-while (mpciter < sim_time/T)
+while (mpciter < 701)
     args.p = [x0;xs];
     args.x0 = reshape(u0',6*N,1); % initial value of the optimization variables
     %tic
@@ -176,13 +176,14 @@ main_loop_time = toc(main_loop)
 
 % just for  plotting 
 ss1 = [];
-ss1(1,1:100) = 0;
+ss1(1,1:700) = 0;
 
 
 figure
-plot3(ss(1,1:100),ss(2,1:100), ss1(1,1:100),xx(1,1:100),xx(2,1:100), xx(3,1:100));
+plot3(ss(1,1:700),ss(2,1:700), ss1(1,1:700),'r--',xx(1,1:700),xx(2,1:700), xx(3,1:700),'b-',...
+    xx(1,1:700),xx(2,1:700),ss1(1,1:700), 'g-','LineWidth', 2);
 xlabel('X[m]'); ylabel('y[m]'); zlabel('z[m]');
-legend('Target','UAV');
+legend('Target','UAV','UAV on ground');
 grid on;
  
 
