@@ -8,12 +8,14 @@
 ✨ "State predictive model of target" folder of repository has the targets model which feds for the UAV as reference(a moveing reference) and it gives the cost value from the initial point of UAV.      
 ✨ "NMPC_TT" has the code of NMPC.      
 
-## ✈️ UAV follows the target illustration 🔥      
+## ✈️ UAV track the target illustration 🔥      
 
+------------------------------------------------------------------------------------------------------------------------------------------------------        
 ### 📌 UAV without Gimbal                
 <img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG1.jpg">            
 <img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
    
+------------------------------------------------------------------------------------------------------------------------------------------------------         
 ### 📌 UAV with 3-DoF Gimbal                
 <img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">         
 <img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
