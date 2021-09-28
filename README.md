@@ -10,16 +10,15 @@
 
 ## ✈️ UAV follows the target illustration 🔥      
 
-### 📌 UAV without Gimbal            
-<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/trackwithoutg1.jpg">     
-<img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG1.jpg">            
-<img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
+### 📌 UAV without Gimbal                
+<img align="right" height="500" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG1.jpg">            
+<img align="right" height="500" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
    
 ### 📌 UAV with 3-DoF Gimbal                
-<img align="middle" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">
-<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack4.jpg">          
-<img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
-<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">                 
+<img align="middle" height="500" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">
+<img align="left" height="500" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack4.jpg">          
+<img align="right" height="500" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
+<img align="left" height="500" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">                 
      
 ### 🔗 This code is source code of this paper 📝        
 [NMPC-based UAV 3D Target Tracking In The Presence Of Obstacles and Visibility Constraints](https://ieeexplore.ieee.org/document/9476710)
