@@ -15,8 +15,7 @@
 <img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
    
 ### 📌 UAV with 3-DoF Gimbal                
-<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">
-<img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack4.jpg">          
+<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">         
 <img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
 <img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">                 
      
