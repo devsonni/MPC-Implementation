@@ -10,12 +10,10 @@
 
 ## ✈️ UAV follows the target illustration 🔥      
 
-### 📌 Target without angular velocity        
-<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif"-->       
-<img align="middle" height="600" width="1000" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">     
+### 📌 Target without angular velocity             
+<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">     
 
 ### 📌 Target with angular velocity                       
-<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5(2).gif"-->
 <img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack4.jpg">          
 <img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
 <img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">                 
