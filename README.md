@@ -10,10 +10,14 @@
 
 ## ✈️ UAV follows the target illustration 🔥      
 
-### 📌 Target without angular velocity             
-<img align="middle" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">     
+### 📌 UAV without Gimbal            
+<img align="left" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/trackwithoutg1.jpg">     
+<img align="right" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG1.jpg">      
+<img align="left" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG.jpg">      
+<img align="left" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
 
-### 📌 Target with angular velocity                       
+### 📌 UAV with 3-DoF Gimbal                
+<img align="middle" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">
 <img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack4.jpg">          
 <img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
 <img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">                 
