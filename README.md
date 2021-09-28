@@ -9,12 +9,13 @@
 ✨ "NMPC_TT" has the code of NMPC.      
 
 ## ✈️ UAV follows the target illustration 🔥      
+##
 
 ### 📌 UAV without Gimbal            
-<img align="left" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/trackwithoutg1.jpg">     
-<img align="right" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG1.jpg">      
-<img align="left" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG.jpg">      
-<img align="left" height="600" width="900" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
+<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/trackwithoutg1.jpg">     
+<img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG1.jpg">      
+<img align="left" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG.jpg">      
+<img align="right" height="500" width="700" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
 
 ##        
 ### 📌 UAV with 3-DoF Gimbal                
