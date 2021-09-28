@@ -13,7 +13,8 @@
 ### 📌 Target without angular velocity        
 <!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif"-->
 <img align="middle" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif">           
-
+<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg"-->
+<img align="middle" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif">     
 
 ### 📌 Target with angular velocity                       
 <!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5(2).gif"-->
