@@ -11,15 +11,15 @@
 ## ✈️ UAV follows the target illustration 🔥      
 
 ### 📌 Target without angular velocity        
-<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif"-->
-<img align="middle" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif">           
-<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg"-->
-<img align="middle" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif">     
+<!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking1.gif"-->       
+<img align="middle" height="600" width="1000" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">     
 
 ### 📌 Target with angular velocity                       
 <!--img height="40" width="40" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5(2).gif"-->
-<img align="middle" height="400" width="500" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Tracking5.gif">        
+<img align="left" height="500" width="800" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack4.jpg">          
+<img align="right" height="500" width="800" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
+<img align="left" height="500" width="800" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">        
+<img align="right" height="500" width="800" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack2.jpg">          
 
-
-### 🔗 Basic source code of this paper 📝        
+### 🔗 This code is source code of this paper 📝        
 [NMPC-based UAV 3D Target Tracking In The Presence Of Obstacles and Visibility Constraints](https://ieeexplore.ieee.org/document/9476710)
