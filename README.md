@@ -19,11 +19,20 @@
 ### 📌 UAV with 3-DoF Gimbal                
 <img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">         
 <img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">                 
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">      
+
+## 🏢🏗️ Without Obstacle Avoidance      
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Obstacle2.jpg">
+
+## 🏢🏗️ With Obstacle Avoidance       
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Obstacle3.jpg">         
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/obstacle5.jpg">        
 
 
 ### 🔗 This code is source code of this paper 📝        
-[NMPC-based UAV 3D Target Tracking In The Presence Of Obstacles and Visibility Constraints](https://ieeexplore.ieee.org/document/9476710)      
+[NMPC-based UAV 3D Target Tracking In The Presence Of Obstacles and Visibility Constraints](https://ieeexplore.ieee.org/document/9476710)       
+
+
 
 <!-- 
 First           | Second
