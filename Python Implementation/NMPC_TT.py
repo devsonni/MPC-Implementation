@@ -3,11 +3,15 @@ from casadi import sin, cos, pi, tan
 import math
 import numpy as np
 from time import time
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+from matplotlib.cbook import flatten
 
 # Shift function
 def shift_timestep(T, t0, x0, u, f_u, xs):
+    #print(u[:, 0])
     f_value = f_u(x0, u[:, 0])
-    print(f_value)
+    #print(f_value)
     x0 = ca.DM.full(x0 + (T * f_value))
 
     t0 = t0 + T
@@ -16,7 +20,7 @@ def shift_timestep(T, t0, x0, u, f_u, xs):
         ca.reshape(u[:, -1], -1, 1)
     )
 
-    con_t = [12, 0.001]   # Linear and angular velocity of target
+    con_t = [20, 1]   # Linear and angular velocity of target
     f_t_value = ca.vertcat(con_t[0] * cos(xs[2]),
                            con_t[0] * sin(xs[2]),
                            con_t[1])
@@ -162,8 +166,8 @@ for k in range(N):
     VFOV = 1    # Making FOV
     HFOV = 1
 
-    w1 = 1     # MPC weights
-    w2 = 1
+    w1 = 0.1     # MPC weights
+    w2 = 2000
 
     a = (stt[2, k] * (tan(stt[6, k] + VFOV / 2)) - stt[2, k] * tan(stt[6, k] - VFOV / 2)) / 2   # FOV Stuff
     b = (stt[2, k] * (tan(stt[5, k] + HFOV / 2)) - stt[2, k] * tan(stt[5, k] - HFOV / 2)) / 2
@@ -175,7 +179,7 @@ for k in range(N):
     X_E[k] = stt[0, k] + a + stt[2, k] * (tan(stt[6, k] - VFOV / 2))                            # Centre of FOV
     Y_E[k] = stt[1, k] + b + stt[2, k] * (tan(stt[5, k] - HFOV / 2))
 
-    obj = obj + w1 * math.sqrt((stt[0, k] - P[8]) ** 2 + (stt[1, k] - P[9]) ** 2) + w2 * ((A[k] * (P[8] - X_E[k]) ** 2 + B[k] * (P[9] - Y_E[k]) * (P[8] - X_E[k]) + C[k] * (P[9] - Y_E[k]) ** 2) - 1)
+    obj = obj + w1 * ca.sqrt((stt[0, k] - P[8]) ** 2 + (stt[1, k] - P[9]) ** 2) + w2 * ((A[k] * (P[8] - X_E[k]) ** 2 + B[k] * (P[9] - Y_E[k]) * (P[8] - X_E[k]) + C[k] * (P[9] - Y_E[k]) ** 2) - 1)
 
 # Obstacle parameters and virtual radius of uav
 x_o_1 = 175
@@ -195,9 +199,9 @@ for k in range(N+1):
     X[5, k],  # limit on gimbal angle phi
     X[6, k],  # limit on gimbal angle theta
     X[7, k],  # limit on gimbal angle shi
-    -math.sqrt((X[0, k]-x_o_1)**2 + (X[1, k]-y_o_1)**2) + (UAV_r+obs_r),  # limit of obstacle-1
-    -math.sqrt((X[0, k]-x_o_2)**2 + (X[1, k]-y_o_2)**2) + (UAV_r+obs_r),  # limit of obstacle-2
-    -math.sqrt((X[0, k]-x_o_3)**2 + (X[1, k]-y_o_3)**2) + (UAV_r+obs_r)   # limit of obstacle-3
+    -ca.sqrt((X[0, k]-x_o_1)**2 + (X[1, k]-y_o_1)**2) + (UAV_r+obs_r),  # limit of obstacle-1
+    -ca.sqrt((X[0, k]-x_o_2)**2 + (X[1, k]-y_o_2)**2) + (UAV_r+obs_r),  # limit of obstacle-2
+    -ca.sqrt((X[0, k]-x_o_3)**2 + (X[1, k]-y_o_3)**2) + (UAV_r+obs_r)   # limit of obstacle-3
 )
 
 # make the decision variables one column vector
@@ -285,15 +289,16 @@ y_target = 150
 theta_target = 0
 
 t0 = 0
-x0 = ca.DM(ca.vertcat(x_init,
-                      y_init,
-                      z_init,
-                      theta_init,
-                      psi_init,
-                      phi_init,
-                      shi_init,
-                      theta_2_init))  # initial state
+#x0 = ca.DM(ca.vertcat(x_init,
+#                      y_init,
+#                      z_init,
+#                      theta_init,
+#                      psi_init,
+#                      phi_init,
+#                      shi_init,
+#                      theta_2_init))  # initial state
 
+x0 = [90, 100, 80, 0, 0, 0, 0, 0]
 xs = ca.DM(ca.vertcat(x_target,
                       y_target,
                       theta_target))  # initial target state
@@ -303,7 +308,8 @@ t = ca.DM(t0)
 
 u0 = ca.DM.zeros((n_controls, N))          # initial control
 #X0 = ca.repmat(x0, 1, N+1)                # initial state full
-xx = ca.DM.zeros((8,20))                   # change size according to main loop run, works as tracker for target and UAV
+#xx = ca.DM.zeros((8,20))                  # change size according to main loop run, works as tracker for target and UAV
+xx = np.zeros((8, 20))
 ss = ca.DM.zeros((3,20))
 
 xx[:,0] = x0
@@ -319,7 +325,7 @@ times = np.array([[0]])
 
 if __name__ == '__main__':
     main_loop = time()  # return time in sec
-    while mpc_iter < 1:
+    while mpc_iter < 15:
         t1 = time()
         args['p'] = ca.vertcat(
             x0,    # current state
@@ -340,6 +346,7 @@ if __name__ == '__main__':
 
         u = ca.reshape(sol['x'], n_controls, N)
         ff_value = ff(u, args['p'])
+        #print(u)
 
         #cat_states = np.dstack((
         #    cat_states,
@@ -358,16 +365,17 @@ if __name__ == '__main__':
             t0
         ))
 
+        print(t)
         # U_x = ca.vertcat(1000,10,3,4,0.1,6)   # For debudding
         # print(U_x)
-        t0, x0, u0, xs = shift_timestep(T, t0, x0, u0, f_u, xs)
+        t0, x0, u0, xs = shift_timestep(T, t0, x0, u, f_u, xs)
 
         # tracking states of target and UAV for plotting
         xx[:, mpc_iter+1] = x0
         ss[:, mpc_iter+1] = xs
 
-        print(xx)
-        print(ss)  # Helps in debugging
+        #print(xx)
+        #print(ss)  # Helps in debugging
 
         # xx ...
         t2 = time()
@@ -380,5 +388,14 @@ if __name__ == '__main__':
 
         mpc_iter = mpc_iter + 1
 
-
+################################################################################
+################################# Plotting Stuff ###############################
+#xx1 = ca.vertsplit(xx, 1)
+print(xx1)
+#fig = plt.figure()
+#ax = plt.axes(projection = '3d')
+#ax.scatter(xx[0,0:16], xx[1,0:16], xx[2,0:16], 'green')
+#ax.scatter(xs[0,0:16], xs[1,0:16], xs[2,0:16])
+#ax.set_title('UAV FOLLOWS TARGET')
+#plt.show()
 
