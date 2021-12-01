@@ -6,6 +6,8 @@ from time import time
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib.cbook import flatten
+from mpl_toolkits.mplot3d import Axes3D
+
 
 # Shift function
 def shift_timestep(T, t0, x0, u, f_u, xs):
@@ -20,7 +22,7 @@ def shift_timestep(T, t0, x0, u, f_u, xs):
         ca.reshape(u[:, -1], -1, 1)
     )
 
-    con_t = [20, 1]   # Linear and angular velocity of target
+    con_t = [12, 0.04]   # Linear and angular velocity of target
     f_t_value = ca.vertcat(con_t[0] * cos(xs[2]),
                            con_t[0] * sin(xs[2]),
                            con_t[1])
@@ -32,6 +34,15 @@ def DM2Arr(dm):
 
 def SX2Arr(sx):
     return np.array(sx.full())
+
+# For plotting a cylinder
+def data_for_cylinder_along_z(center_x,center_y,radius,height_z):
+    z = np.linspace(0, height_z, 50)
+    theta = np.linspace(0, 2*np.pi, 50)
+    theta_grid, z_grid=np.meshgrid(theta, z)
+    x_grid = radius*np.cos(theta_grid) + center_x
+    y_grid = radius*np.sin(theta_grid) + center_y
+    return x_grid,y_grid,z_grid
 
 # mpc parameters
 # sim_time = 200    # simulation time
@@ -179,7 +190,8 @@ for k in range(N):
     X_E[k] = stt[0, k] + a + stt[2, k] * (tan(stt[6, k] - VFOV / 2))                            # Centre of FOV
     Y_E[k] = stt[1, k] + b + stt[2, k] * (tan(stt[5, k] - HFOV / 2))
 
-    obj = obj + w1 * ca.sqrt((stt[0, k] - P[8]) ** 2 + (stt[1, k] - P[9]) ** 2) + w2 * ((A[k] * (P[8] - X_E[k]) ** 2 + B[k] * (P[9] - Y_E[k]) * (P[8] - X_E[k]) + C[k] * (P[9] - Y_E[k]) ** 2) - 1)
+    obj = obj + w1 * ca.sqrt((stt[0, k] - P[8]) ** 2 + (stt[1, k] - P[9]) ** 2) + \
+          w2 * ((A[k] * (P[8] - X_E[k]) ** 2 + B[k] * (P[9] - Y_E[k]) * (P[8] - X_E[k]) + C[k] * (P[9] - Y_E[k]) ** 2) - 1)
 
 # Obstacle parameters and virtual radius of uav
 x_o_1 = 175
@@ -308,9 +320,8 @@ t = ca.DM(t0)
 
 u0 = ca.DM.zeros((n_controls, N))          # initial control
 #X0 = ca.repmat(x0, 1, N+1)                # initial state full
-#xx = ca.DM.zeros((8,20))                  # change size according to main loop run, works as tracker for target and UAV
-xx = np.zeros((8, 20))
-ss = ca.DM.zeros((3,20))
+xx = ca.DM.zeros((8,801))                  # change size according to main loop run, works as tracker for target and UAV
+ss = ca.DM.zeros((3,801))
 
 xx[:,0] = x0
 ss[:,0] = xs
@@ -325,7 +336,7 @@ times = np.array([[0]])
 
 if __name__ == '__main__':
     main_loop = time()  # return time in sec
-    while mpc_iter < 15:
+    while mpc_iter < 701:
         t1 = time()
         args['p'] = ca.vertcat(
             x0,    # current state
@@ -365,7 +376,7 @@ if __name__ == '__main__':
             t0
         ))
 
-        print(t)
+        #print(t)
         # U_x = ca.vertcat(1000,10,3,4,0.1,6)   # For debudding
         # print(U_x)
         t0, x0, u0, xs = shift_timestep(T, t0, x0, u, f_u, xs)
@@ -390,12 +401,28 @@ if __name__ == '__main__':
 
 ################################################################################
 ################################# Plotting Stuff ###############################
-#xx1 = ca.vertsplit(xx, 1)
-print(xx1)
-#fig = plt.figure()
-#ax = plt.axes(projection = '3d')
-#ax.scatter(xx[0,0:16], xx[1,0:16], xx[2,0:16], 'green')
-#ax.scatter(xs[0,0:16], xs[1,0:16], xs[2,0:16])
-#ax.set_title('UAV FOLLOWS TARGET')
-#plt.show()
+
+# Collecting data for obstacles
+Xc_1,Yc_1,Zc_1 = data_for_cylinder_along_z(x_o_1,y_o_1,obs_r,150)
+Xc_2,Yc_2,Zc_2 = data_for_cylinder_along_z(x_o_2,y_o_2,obs_r,100)
+Xc_3,Yc_3,Zc_3 = data_for_cylinder_along_z(x_o_3,y_o_3,obs_r,120)
+
+# Plotting starts from here
+xx1 = np.array(xx)
+xs1 = np.array(ss)
+ss1 = np.zeros((701))
+fig = plt.figure()
+ax = plt.axes(projection = '3d')
+ax.plot3D(xx1[0, 0:701], xx1[1, 0:701], xx1[2, 0:701], linewidth = "2", color = "blue")
+ax.plot3D(xs1[0,0:701], xs1[1,0:701], ss1[0:701], linewidth = "2", linestyle = "--", color = "red")
+ax.plot3D(xx1[0, 0:701], xx1[1, 0:701], ss1[0:701], linewidth = "2", color = "green")
+ax.plot_surface(Xc_1, Yc_1, Zc_1)  # 0bstacles
+ax.plot_surface(Xc_2, Yc_2, Zc_2)
+ax.plot_surface(Xc_3, Yc_3, Zc_3)
+ax.set_title('UAV FOLLOWS TARGET')
+##################
+plt.show()
+
+
+
 
