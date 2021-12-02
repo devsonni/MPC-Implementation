@@ -44,6 +44,15 @@ def data_for_cylinder_along_z(center_x,center_y,radius,height_z):
     y_grid = radius*np.sin(theta_grid) + center_y
     return x_grid,y_grid,z_grid
 
+# For plotting ellipse
+def ellipse(a_p, b_p, x_e_1, y_e_1):
+    x = ca.DM.zeros((101))
+    y = ca.DM.zeros((101))
+    th = np.linspace(0,  2*np.pi, 100)
+    x = a_p * sin(th) + x_e_1
+    y = b_p * cos(th) + y_e_1
+    return x, y
+
 # mpc parameters
 # sim_time = 200    # simulation time
 T = 0.2             # discrete step
@@ -322,12 +331,13 @@ u0 = ca.DM.zeros((n_controls, N))          # initial control
 #X0 = ca.repmat(x0, 1, N+1)                # initial state full
 xx = ca.DM.zeros((8,801))                  # change size according to main loop run, works as tracker for target and UAV
 ss = ca.DM.zeros((3,801))
+x_e_1 = ca.DM.zeros((801))
+y_e_1 = ca.DM.zeros((801))
 
 xx[:,0] = x0
 ss[:,0] = xs
 
 mpc_iter = 0
-#cat_states = DM2Arr(X0)
 cat_controls = DM2Arr(u0[:, 0])
 times = np.array([[0]])
 
@@ -359,11 +369,6 @@ if __name__ == '__main__':
         ff_value = ff(u, args['p'])
         #print(u)
 
-        #cat_states = np.dstack((
-        #    cat_states,
-        #    ff_value,
-        #))
-
         cat_controls = np.vstack((
             cat_controls,
             DM2Arr(u[:, 0])
@@ -376,9 +381,6 @@ if __name__ == '__main__':
             t0
         ))
 
-        #print(t)
-        # U_x = ca.vertcat(1000,10,3,4,0.1,6)   # For debudding
-        # print(U_x)
         t0, x0, u0, xs = shift_timestep(T, t0, x0, u, f_u, xs)
 
         # tracking states of target and UAV for plotting
@@ -399,6 +401,11 @@ if __name__ == '__main__':
 
         mpc_iter = mpc_iter + 1
 
+        a_p = (x0[2] * (tan(x0[6] + VFOV / 2)) - x0[2] * tan(x0[6] - VFOV / 2)) / 2 # For plotting FOV
+        b_p = (x0[2] * (tan(x0[5] + HFOV / 2)) - x0[2] * tan(x0[5] - HFOV / 2)) / 2
+        x_e_1[mpc_iter] = x0[0] + a_p + x0[2] * (tan(x0[6] - VFOV / 2))
+        y_e_1[mpc_iter] = x0[1] + b_p + x0[2] * (tan(x0[5] - HFOV / 2))
+
 ################################################################################
 ################################# Plotting Stuff ###############################
 
@@ -406,23 +413,23 @@ if __name__ == '__main__':
 Xc_1,Yc_1,Zc_1 = data_for_cylinder_along_z(x_o_1,y_o_1,obs_r,150)
 Xc_2,Yc_2,Zc_2 = data_for_cylinder_along_z(x_o_2,y_o_2,obs_r,100)
 Xc_3,Yc_3,Zc_3 = data_for_cylinder_along_z(x_o_3,y_o_3,obs_r,120)
+x_e, y_e = ellipse(a_p, b_p, x_e_1[mpc_iter], y_e_1[mpc_iter])
 
 # Plotting starts from here
 xx1 = np.array(xx)
 xs1 = np.array(ss)
 ss1 = np.zeros((701))
+x_e_2 = np.array(x_e)
+y_e_2 = np.array(y_e)
+
 fig = plt.figure()
 ax = plt.axes(projection = '3d')
 ax.plot3D(xx1[0, 0:701], xx1[1, 0:701], xx1[2, 0:701], linewidth = "2", color = "blue")
 ax.plot3D(xs1[0,0:701], xs1[1,0:701], ss1[0:701], linewidth = "2", linestyle = "--", color = "red")
 ax.plot3D(xx1[0, 0:701], xx1[1, 0:701], ss1[0:701], linewidth = "2", color = "green")
-ax.plot_surface(Xc_1, Yc_1, Zc_1)  # 0bstacles
+ax.plot3D(x_e_2[0:100, 0], y_e_2[0:100, 0] , ss1[0:100], linewidth = "2", color = "black")
+ax.plot_surface(Xc_1, Yc_1, Zc_1, cstride = 1,rstride= 1)  # 0bstacles
 ax.plot_surface(Xc_2, Yc_2, Zc_2)
 ax.plot_surface(Xc_3, Yc_3, Zc_3)
 ax.set_title('UAV FOLLOWS TARGET')
-##################
 plt.show()
-
-
-
-
