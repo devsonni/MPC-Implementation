@@ -74,21 +74,32 @@ g = [];  %constrains of pitch angle theta
 
 for k=1:N
     stt = X(1:8,1:N); A= SX.sym('A',N); B= SX.sym('B',N); C= SX.sym('C',N); X_E= SX.sym('X_E',N); Y_E= SX.sym('Y_E',N);
-    VFOV = 5;
-    HFOV = 5;
-    w1 = 0.1;
-    w2 = 1;
-    a = (stt(3,k)*(tan(stt(7,k)+VFOV/2)) - stt(3,k)*tan(stt(7,k)-VFOV/2))/2;
+    
+    VFOV = 1; % Making FOV 
+    HFOV = 1;
+    
+    w1 = 0.01;   %MPC weights
+    w2 = 2000;
+    
+    a = (stt(3,k)*(tan(stt(7,k)+VFOV/2)) - stt(3,k)*tan(stt(7,k)-VFOV/2))/2;  %FOV Stuff
     b = (stt(3,k)*(tan(stt(6,k)+HFOV/2)) - stt(3,k)*tan(stt(6,k)-HFOV/2))/2;
     A(k) = ((cos(stt(8,k)))^2)/a^2 + ((sin(stt(8,k)))^2)/b^2;
     B(k) = 2*cos(stt(8,k))*sin(stt(8,k))*((1/a^2)-(1/b^2));
     C(k) = ((sin(stt(8,k)))^2)/a^2 + ((cos(stt(8,k)))^2)/b^2;
-    X_E(k) = stt(1,k) + a + stt(3,k)*(tan(stt(7,k)-VFOV/2));
+    
+    X_E(k) = stt(1,k) + a + stt(3,k)*(tan(stt(7,k)-VFOV/2));                  %Centre of FOV  
     Y_E(k) = stt(2,k) + b + stt(3,k)*(tan(stt(6,k)-HFOV/2));
+    
     obj = obj + w1*sqrt((stt(1,k)-P(9))^2 + (stt(2,k)-P(10))^2) + w2*((A(k)*(P(9)-X_E(k))^2 +...
         B(k)*(P(10)-Y_E(k))*(P(9)-X_E(k)) + C(k)*(P(10)-Y_E(k))^2)-1);
 end
 
+%Parameters of Obstacle
+x_o_1 = 175; y_o_1 = 779; 
+x_o_2 = -134; y_o_2 = 155;
+x_o_3 = 441; y_o_3 = 343;
+obs_r = 30;
+UAV_r = 5; 
 %compute the constrains
  for k=1:N+1
      g = [g, X(3,k)]; %limit on height
@@ -96,6 +107,9 @@ end
      g = [g, X(6,k)]; %limit on gimbal angle phi
      g = [g, X(7,k)]; %limit on gimbal angle theta
      g = [g, X(8,k)]; %limit on gimbal angle shi
+     g = [g, -sqrt((X(1,k)-x_o_1)^2+(X(2,k)-y_o_1)^2) + (UAV_r+obs_r)]; %limit of obstacle-1
+     g = [g, -sqrt((X(1,k)-x_o_2)^2+(X(2,k)-y_o_2)^2) + (UAV_r+obs_r)]; %limit of obstacle-2
+     g = [g, -sqrt((X(1,k)-x_o_3)^2+(X(2,k)-y_o_3)^2) + (UAV_r+obs_r)]; %limit of obstacle-2
  end
  
 % make the decision variables one column vector
@@ -104,7 +118,7 @@ nlp_prob = struct('f', obj, 'x', OPT_variables, 'g', g, 'p', P);
 
 opts = struct;
 opts.ipopt.max_iter = 100;
-opts.ipopt.print_level =0;%0,3
+opts.ipopt.print_level =0;  %0,3
 opts.print_time = 0;
 opts.ipopt.acceptable_tol =1e-8;
 opts.ipopt.acceptable_obj_change_tol = 1e-6;
@@ -114,11 +128,14 @@ solver = nlpsol('solver', 'ipopt', nlp_prob,opts);
 args = struct;
 
 % inequality constraints (state constraints)
-args.lbg(1,1:5:80) = 75;          args.ubg(1,1:5:80) = 150;             % bounds on height  
-args.lbg(1,2:5:80) = -0.2618;     args.ubg(1,2:5:80) =  0.2618;         % bounds on theta of UAV 
-args.lbg(1,3:5:80) = phi_g_min;   args.ubg(1,3:5:80) = phi_g_max;       % bounds on gimbal angle phi
-args.lbg(1,4:5:80) = theta_g_min; args.ubg(1,4:5:80) = theta_g_max;     % bounds on gimbal angle theta
-args.lbg(1,5:5:80) = shi_g_min;   args.ubg(1,5:5:80) = shi_g_max;       % bounds on gimbal angle shi
+args.lbg(1,1:8:128) = 75;          args.ubg(1,1:8:128) = 150;             % bounds on height  
+args.lbg(1,2:8:128) = -0.2618;     args.ubg(1,2:8:128) =  0.2618;         % bounds on theta of UAV 
+args.lbg(1,3:8:128) = phi_g_min;   args.ubg(1,3:8:128) = phi_g_max;       % bounds on gimbal angle phi
+args.lbg(1,4:8:128) = theta_g_min; args.ubg(1,4:8:128) = theta_g_max;     % bounds on gimbal angle theta
+args.lbg(1,5:8:128) = shi_g_min;   args.ubg(1,5:8:128) = shi_g_max;       % bounds on gimbal angle shi
+args.lbg(1,6:8:128) = -inf;        args.ubg(1,6:8:128) = 0;               % bounds on obstacle-1
+args.lbg(1,7:8:128) = -inf;        args.ubg(1,7:8:128) = 0;               % bounds on obstacle-2
+args.lbg(1,8:8:128) = -inf;        args.ubg(1,8:8:128) = 0;               % bounds on obstacle-2
 
 % input constraints
 args.lbx(1:6:6*N-1,1) = v_u_min;  args.lbx(2:6:6*N,1) = omega_2_u_min;  args.lbx(3:6:6*N,1) = omega_3_u_min;  % UAV's input bounds
@@ -168,45 +185,78 @@ while (mpciter < 701)
     xx(:,mpciter+2) = x0;  
     mpciter
     mpciter = mpciter + 1;
-
+    
+    a_p = (x0(3)*(tan(x0(7)+VFOV/2)) - x0(3)*tan(x0(7)-VFOV/2))/2; %this is for plotting FOV
+    b_p = (x0(3)*(tan(x0(6)+HFOV/2)) - x0(3)*tan(x0(6)-HFOV/2))/2;
+    X_E_1(mpciter) = x0(1) + a_p + x0(3)*(tan(x0(7)-VFOV/2));
+    Y_E_1(mpciter) = x0(2) + b_p + x0(3)*(tan(x0(6)-HFOV/2));
 end
 main_loop_time = toc(main_loop)
 
+%% Calculating distance between centre of FOV and targets position (that can be use as RL error)
+
+for i=1:701
+    error(i) = sqrt((X_E_1(i)-ss(1,i))^2+(Y_E_1(i)-ss(2,i))^2);
+end
+
+
 %% Plotting stuff----------------------------------------------------------------------------------------------------------------------
+
+[x_e, y_e] = ellipse(a_p, b_p, X_E_1(mpciter), Y_E_1(mpciter)); %this is for plotting FOV
 
 % just for  plotting 
 ss1 = [];
 ss1(1,1:700) = 0;
-
+[X,Y,Z] = cylinder(obs_r);
+h = 150;
+Z = Z*h;
 
 figure
 plot3(ss(1,1:700),ss(2,1:700), ss1(1,1:700),'r--',xx(1,1:700),xx(2,1:700), xx(3,1:700),'b-',...
-    xx(1,1:700),xx(2,1:700),ss1(1,1:700), 'g-','LineWidth', 2);
+    xx(1,1:700),xx(2,1:700),ss1(1,1:700), 'g-',x_e(1:101), y_e(1:101), ss1(1,1:101), 'y-', 'LineWidth', 2);
+hold on;
+surf(X+x_o_1,Y+y_o_1,Z);
+hold on;
+surf(X+x_o_2,Y+y_o_2,Z);
+hold on;
+surf(X+x_o_3,Y+y_o_3,Z);
 xlabel('X[m]'); ylabel('y[m]'); zlabel('z[m]');
-legend('Target','UAV','UAV on ground');
+legend('Target','UAV','Projection of UAV','FOV','Obstacles');
 grid on;
- 
+
+figure
+subplot(1,2,1)
+plot(error(1:701),'r-','LineWidth',2);
+ylabel('Error[m]');
+legend('Error Of FOV');
+title('Error');
+
+subplot(1,2,2)
+Total_Error = bar(sum(error));
+ylabel('Total error of FOV');
+legend('FOV Error');
+title('Total Error');
 
 %{
-% Code for saving video file of simulation
-
+Code for saving video file of simulation
 figh = figure
-for i=1:100
+for i=1:700
     hold on;
     plot3(ss(1,i),ss(2,i), ss1(1,i),xx(1,i),xx(2,i), xx(3,i),'go', 'LineWidth', 4, 'MarkerSize', 1);
     plot3(ss(1,i),ss(2,i), ss1(1,i), 'bo', 'LineWidth', 4, 'MarkerSize', 1);
     xlabel('X[m]'); ylabel('y[m]'); zlabel('z[m]');
     legend('Target','UAV');
-    view([30+i 35]);
+    view(-18, 57);
+    axis([0 1800 50 350 0 200])
     grid on;
     hold off;
     drawnow;
     
-    movieVector(i) = getframe(figh, [10 10 520 400]);
-    
+    movieVector(i) = getframe(figh);    
 end
 
-myWriter = VideoWriter('Tracking6');
+
+myWriter = VideoWriter('Track_1');
 myWriter.FrameRate = 10;
 
 open(myWriter);
