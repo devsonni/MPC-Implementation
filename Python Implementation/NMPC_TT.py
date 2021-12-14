@@ -417,8 +417,6 @@ ax.plot3D(x_e_2[0:100, 0], y_e_2[0:100, 0] , ss1[0:100], linewidth = "2", color 
 #ax.plot_surface(Xc_2, Yc_2, Zc_2)
 #ax.plot_surface(Xc_3, Yc_3, Zc_3)
 ax.set_title('UAV FOLLOWS TARGET')
-plt.show()
-
 
 # Calculating error between UAV and FOV
 error = ca.DM.zeros(701)
@@ -427,4 +425,15 @@ for i in range(700):
 
 
 error1 = np.array(error)
+sum_err = sum(error1)
 print(sum(error1))
+
+fig = plt.figure()
+plt.subplot(121)
+plt.plot(error[0:700], linewidth= "2", color = "red")
+plt.xlabel("Iteration")
+plt.ylabel("Error")
+plt.subplot(122)
+plt.bar('Error' , sum_err, color="red")
+
+plt.show()
