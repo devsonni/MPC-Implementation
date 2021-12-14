@@ -22,7 +22,7 @@ def shift_timestep(T, t0, x0, u, f_u, xs):
         ca.reshape(u[:, -1], -1, 1)
     )
 
-    con_t = [12, 0.04]   # Linear and angular velocity of target
+    con_t = [12, 0.01]   # Linear and angular velocity of target
     f_t_value = ca.vertcat(con_t[0] * cos(xs[2]),
                            con_t[0] * sin(xs[2]),
                            con_t[1])
@@ -54,7 +54,6 @@ def ellipse(a_p, b_p, x_e_1, y_e_1):
     return x, y
 
 # mpc parameters
-# sim_time = 200    # simulation time
 T = 0.2             # discrete step
 N = 15              # number of look ahead steps
 
@@ -186,7 +185,7 @@ for k in range(N):
     VFOV = 1    # Making FOV
     HFOV = 1
 
-    w1 = 0.1     # MPC weights
+    w1 = 0.01     # MPC weights
     w2 = 2000
 
     a = (stt[2, k] * (tan(stt[6, k] + VFOV / 2)) - stt[2, k] * tan(stt[6, k] - VFOV / 2)) / 2   # FOV Stuff
@@ -296,7 +295,7 @@ args = {
 
 # Initial state of UAV, gimbal and target
 x_init = 90
-y_init = 100
+y_init = 150
 z_init = 80
 theta_init = 0
 psi_init = 0
@@ -310,16 +309,7 @@ y_target = 150
 theta_target = 0
 
 t0 = 0
-#x0 = ca.DM(ca.vertcat(x_init,
-#                      y_init,
-#                      z_init,
-#                      theta_init,
-#                      psi_init,
-#                      phi_init,
-#                      shi_init,
-#                      theta_2_init))  # initial state
-
-x0 = [90, 100, 80, 0, 0, 0, 0, 0]
+x0 = [90, 150, 80, 0, 0, 0, 0, 0]
 xs = ca.DM(ca.vertcat(x_target,
                       y_target,
                       theta_target))  # initial target state
@@ -328,7 +318,6 @@ xs = ca.DM(ca.vertcat(x_target,
 t = ca.DM(t0)
 
 u0 = ca.DM.zeros((n_controls, N))          # initial control
-#X0 = ca.repmat(x0, 1, N+1)                # initial state full
 xx = ca.DM.zeros((8,801))                  # change size according to main loop run, works as tracker for target and UAV
 ss = ca.DM.zeros((3,801))
 x_e_1 = ca.DM.zeros((801))
@@ -367,7 +356,6 @@ if __name__ == '__main__':
 
         u = ca.reshape(sol['x'], n_controls, N)
         ff_value = ff(u, args['p'])
-        #print(u)
 
         cat_controls = np.vstack((
             cat_controls,
@@ -386,9 +374,6 @@ if __name__ == '__main__':
         # tracking states of target and UAV for plotting
         xx[:, mpc_iter+1] = x0
         ss[:, mpc_iter+1] = xs
-
-        #print(xx)
-        #print(ss)  # Helps in debugging
 
         # xx ...
         t2 = time()
@@ -424,12 +409,22 @@ y_e_2 = np.array(y_e)
 
 fig = plt.figure()
 ax = plt.axes(projection = '3d')
-ax.plot3D(xx1[0, 0:701], xx1[1, 0:701], xx1[2, 0:701], linewidth = "2", color = "blue")
-ax.plot3D(xs1[0,0:701], xs1[1,0:701], ss1[0:701], linewidth = "2", linestyle = "--", color = "red")
-ax.plot3D(xx1[0, 0:701], xx1[1, 0:701], ss1[0:701], linewidth = "2", color = "green")
+ax.plot3D(xx1[0, 0:700], xx1[1, 0:700], xx1[2, 0:700], linewidth = "2", color = "blue")
+ax.plot3D(xs1[0,0:700], xs1[1,0:700], ss1[0:700], linewidth = "2", linestyle = "--", color = "red")
+ax.plot3D(xx1[0, 0:700], xx1[1, 0:700], ss1[0:700], linewidth = "2", color = "green")
 ax.plot3D(x_e_2[0:100, 0], y_e_2[0:100, 0] , ss1[0:100], linewidth = "2", color = "black")
-ax.plot_surface(Xc_1, Yc_1, Zc_1, cstride = 1,rstride= 1)  # 0bstacles
-ax.plot_surface(Xc_2, Yc_2, Zc_2)
-ax.plot_surface(Xc_3, Yc_3, Zc_3)
+#ax.plot_surface(Xc_1, Yc_1, Zc_1, cstride = 1,rstride= 1)  # 0bstacles
+#ax.plot_surface(Xc_2, Yc_2, Zc_2)
+#ax.plot_surface(Xc_3, Yc_3, Zc_3)
 ax.set_title('UAV FOLLOWS TARGET')
 plt.show()
+
+
+# Calculating error between UAV and FOV
+error = ca.DM.zeros(701)
+for i in range(700):
+    error[i] = ca.sqrt((x_e_1[i+1]-ss[0,i])**2 + (y_e_1[i+1]-ss[1,i])**2)
+
+
+error1 = np.array(error)
+print(sum(error1))
