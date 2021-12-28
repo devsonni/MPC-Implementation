@@ -54,7 +54,7 @@ def ellipse(a_p, b_p, x_e_1, y_e_1):
     return x, y
 
 # mpc parameters
-T = 0.2             # discrete step
+T = 1           # discrete step
 N = 15              # number of look ahead steps
 
 # Constrains of UAV with gimbal
@@ -174,6 +174,22 @@ obj = 0  # objective function that need to minimize with optimal variables
 g = []
 # g = ca.SX.sym('g', 8*(N+1))  # constrains of pitch angle theta
 
+# Tunned by RL parameters
+w1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+w2 = [1939, 1062, 1686, 1970, 1788, 1935, 1303, 272, 866, 1499, 1135, 25, 381, 742, 1637, 1192, 232, 30, 546, 1865, 916, 707, 288, 1857, 896]
+wi = np.zeros((375))
+wii = np.zeros((375))
+
+count = 0
+for k in range(25):
+    for i in range(15):
+        wi[count] = w1[k]
+        wii[count] = w2[k]
+        count += 1
+
+#print(wi, wii)
+
+count = 0
 for k in range(N):
     stt = X[0:8, 0:N]
     A = ca.SX.sym('A', N)
@@ -185,8 +201,10 @@ for k in range(N):
     VFOV = 1    # Making FOV
     HFOV = 1
 
-    w1 = 0.01     # MPC weights
-    w2 = 2000
+    w1 = 1     # MPC weights
+    w2 = 2
+    #wi[count]
+    #wii[count]
 
     a = (stt[2, k] * (tan(stt[6, k] + VFOV / 2)) - stt[2, k] * tan(stt[6, k] - VFOV / 2)) / 2   # FOV Stuff
     b = (stt[2, k] * (tan(stt[5, k] + HFOV / 2)) - stt[2, k] * tan(stt[5, k] - HFOV / 2)) / 2
@@ -200,10 +218,11 @@ for k in range(N):
 
     obj = obj + w1 * ca.sqrt((stt[0, k] - P[8]) ** 2 + (stt[1, k] - P[9]) ** 2) + \
           w2 * ((A[k] * (P[8] - X_E[k]) ** 2 + B[k] * (P[9] - Y_E[k]) * (P[8] - X_E[k]) + C[k] * (P[9] - Y_E[k]) ** 2) - 1)
+    count += 1
 
 # Obstacle parameters and virtual radius of uav
 x_o_1 = 175
-y_o_1 = 779
+y_o_1 = 820
 x_o_2 = -134
 y_o_2 = 155
 x_o_3 = 441
@@ -293,16 +312,6 @@ args = {
     'ubx': ubx   # upper bound for controls
 }
 
-# Initial state of UAV, gimbal and target
-x_init = 90
-y_init = 150
-z_init = 80
-theta_init = 0
-psi_init = 0
-phi_init = 0
-shi_init = 0
-theta_2_init = 0
-
 # target
 x_target = 100
 y_target = 150
@@ -327,6 +336,7 @@ xx[:,0] = x0
 ss[:,0] = xs
 
 mpc_iter = 0
+loop_run = 700
 cat_controls = DM2Arr(u0[:, 0])
 times = np.array([[0]])
 
@@ -335,7 +345,7 @@ times = np.array([[0]])
 
 if __name__ == '__main__':
     main_loop = time()  # return time in sec
-    while mpc_iter < 701:
+    while mpc_iter < loop_run:
         t1 = time()
         args['p'] = ca.vertcat(
             x0,    # current state
@@ -391,6 +401,7 @@ if __name__ == '__main__':
         x_e_1[mpc_iter] = x0[0] + a_p + x0[2] * (tan(x0[6] - VFOV / 2))
         y_e_1[mpc_iter] = x0[1] + b_p + x0[2] * (tan(x0[5] - HFOV / 2))
 
+
 ################################################################################
 ################################# Plotting Stuff ###############################
 
@@ -409,13 +420,13 @@ y_e_2 = np.array(y_e)
 
 fig = plt.figure()
 ax = plt.axes(projection = '3d')
-ax.plot3D(xx1[0, 0:700], xx1[1, 0:700], xx1[2, 0:700], linewidth = "2", color = "blue")
-ax.plot3D(xs1[0,0:700], xs1[1,0:700], ss1[0:700], linewidth = "2", linestyle = "--", color = "red")
-ax.plot3D(xx1[0, 0:700], xx1[1, 0:700], ss1[0:700], linewidth = "2", color = "green")
+ax.plot3D(xx1[0, 0:loop_run-1], xx1[1, 0:loop_run-1], xx1[2, 0:loop_run-1], linewidth = "2", color = "blue")
+ax.plot3D(xs1[0,0:loop_run-1], xs1[1,0:loop_run-1], ss1[0:loop_run-1], linewidth = "2", linestyle = "--", color = "red")
+ax.plot3D(xx1[0, 0:loop_run-1], xx1[1, 0:loop_run-1], ss1[0:loop_run-1], linewidth = "2", color = "green")
 ax.plot3D(x_e_2[0:100, 0], y_e_2[0:100, 0] , ss1[0:100], linewidth = "2", color = "black")
-#ax.plot_surface(Xc_1, Yc_1, Zc_1, cstride = 1,rstride= 1)  # 0bstacles
-#ax.plot_surface(Xc_2, Yc_2, Zc_2)
-#ax.plot_surface(Xc_3, Yc_3, Zc_3)
+ax.plot_surface(Xc_1, Yc_1, Zc_1, cstride = 1,rstride= 1)  # 0bstacles
+ax.plot_surface(Xc_2, Yc_2, Zc_2)
+ax.plot_surface(Xc_3, Yc_3, Zc_3)
 ax.set_title('UAV FOLLOWS TARGET')
 
 # Calculating error between UAV and FOV
@@ -423,14 +434,14 @@ error = ca.DM.zeros(701)
 for i in range(700):
     error[i] = ca.sqrt((x_e_1[i+1]-ss[0,i])**2 + (y_e_1[i+1]-ss[1,i])**2)
 
-
+itr = loop_run
 error1 = np.array(error)
-sum_err = sum(error1)
-print(sum(error1))
+sum_err = sum(error1[0:itr])
+print(sum(error1[0:itr]))
 
 fig = plt.figure()
 plt.subplot(121)
-plt.plot(error[0:700], linewidth= "2", color = "red")
+plt.plot(error[0:itr], linewidth= "2", color = "red")
 plt.xlabel("Iteration")
 plt.ylabel("Error")
 plt.subplot(122)
