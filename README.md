@@ -11,22 +11,22 @@
 ## ✈️ UAV tracks the target illustration 🔥      
 
 ### 📌 UAV without Gimbal                
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackWTG1.jpg">            
-<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TrackTWG.jpg">     
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TrackWTG1.jpg">            
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TrackTWG.jpg">     
    
 ##          
 
 ### 📌 UAV with 3-DoF Gimbal                
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">         
-<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack5.jpg">        
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack3.jpg">      
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack6.jpg">         
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack5.jpg">        
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack3.jpg">      
 
 ## 🏢🏗️ Without Obstacle Avoidance      
-<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Obstacle2.jpg">
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/Obstacle2.jpg">
 
 ## 🏢🏗️ With Obstacle Avoidance       
-<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/Obstacle3.jpg">         
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/obstacle5.jpg">        
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/Obstacle3.jpg">         
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/obstacle5.jpg">        
 
 
 ### 🔗 This code is source code of this paper 📝        
@@ -37,4 +37,4 @@
 <!-- 
 First           | Second
 ----------------|----------------------
-<img align="left" height="500" width="600" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg">|<img align="left" height="500" width="600" src="https://github.com/devsonni/MPC-Implementation/blob/main/gif/TargetTrack6.jpg"> -->
+<img align="left" height="500" width="600" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack6.jpg">|<img align="left" height="500" width="600" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack6.jpg"> -->
