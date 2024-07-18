@@ -6,6 +6,8 @@ In this implementation, the system is an unmanned aerial vehicle (UAV) tracking 
 
 ## Repository Structure
 
+This repository contains three language implementations: Python, C++, and MATLAB. The MATLAB implementation includes additional models such as state prediction of the target and dynamic obstacle avoidance modules.
+
 - **"State predictive model of target"**: Contains the target's model, serving as a moving reference for the UAV and providing the initial cost value.
 - **"NMPC_TT"**: Contains the NMPC code.
 
