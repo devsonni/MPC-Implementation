@@ -1,40 +1,35 @@
 # NMPC Implementation 🕹️     
 
-👉 For simple intiution Model predictive control uses the system model to do prediction of future states of system for some predicted optimal inputs in prediction horizon, and applys only one input and does the same process again to compansate the unmeasured noise or disturbance in system.      
-👉 In this instance our system is unmaned arieal vehicle and it's following the target which is mobile vehicle.       
-👉 The cost function that sould be minimize for predicted inputs is made by the distance between UAV and target which is moving.   
-👉 This code uses the casadi framework to code NMPC.
+Model Predictive Control (MPC) uses a system model to predict future states based on optimal predicted inputs within a prediction horizon. The control applies only one input, then repeats the process to compensate for unmeasured noise or disturbances.
 
-✨ "State predictive model of target" folder of repository has the targets model which feds for the UAV as reference(a moveing reference) and it gives the cost value from the initial point of UAV.      
-✨ "NMPC_TT" has the code of NMPC.      
+In this implementation, the system is an unmanned aerial vehicle (UAV) tracking a mobile vehicle. The cost function, minimized for predicted inputs, is derived from the distance between the UAV and the moving target. This code leverages the CasADi framework for NMPC.
 
-## ✈️ UAV tracks the target illustration 🔥      
+## Repository Structure
 
-### 📌 UAV without Gimbal                
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TrackWTG1.jpg">            
-<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TrackTWG.jpg">     
-   
-##          
+- **"State predictive model of target"**: Contains the target's model, serving as a moving reference for the UAV and providing the initial cost value.
+- **"NMPC_TT"**: Contains the NMPC code.
 
-### 📌 UAV with 3-DoF Gimbal                
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack6.jpg">         
-<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack5.jpg">        
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack3.jpg">      
+## UAV Tracking Target Illustration ✈️
 
-## 🏢🏗️ Without Obstacle Avoidance      
+### UAV without Gimbal
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TrackWTG1.jpg">
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TrackTWG.jpg">
+
+---
+
+### UAV with 3-DoF Gimbal
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack6.jpg">
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack5.jpg">
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack3.jpg">
+
+---
+
+## Without Obstacle Avoidance 🏢🏗️
 <img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/Obstacle2.jpg">
 
-## 🏢🏗️ With Obstacle Avoidance       
-<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/Obstacle3.jpg">         
-<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/obstacle5.jpg">        
+## With Obstacle Avoidance 🏢🏗️
+<img align="right" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/Obstacle3.jpg">
+<img align="left" height="500" width="950" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/obstacle5.jpg">
 
-
-### 🔗 This code is source code of this paper 📝        
-[NMPC-based UAV 3D Target Tracking In The Presence Of Obstacles and Visibility Constraints](https://ieeexplore.ieee.org/document/9476710)       
-
-
-
-<!-- 
-First           | Second
-----------------|----------------------
-<img align="left" height="500" width="600" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack6.jpg">|<img align="left" height="500" width="600" src="https://github.com/devsonni/MPC-Implementation/blob/main/Imgs/TargetTrack6.jpg"> -->
+### Source Code Reference 🔗
+This code is the source code of the paper: [NMPC-based UAV 3D Target Tracking In The Presence Of Obstacles and Visibility Constraints](https://ieeexplore.ieee.org/document/9476710).
